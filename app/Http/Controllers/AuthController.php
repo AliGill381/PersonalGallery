@@ -15,20 +15,28 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        // dd('adfasdfasdf');
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone_no' => 'required|string|min:8',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'error' => $validator->errors()->first()
+            ], 422);
+        }
+
         $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'phone_no' => $validatedData['phone_no'],
-            'password' => Hash::make($validatedData['password']),
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone_no' => $request->phone_no,
+            'password' => Hash::make($request->password),
         ]);
+
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $user->remember_token = $token;
@@ -37,7 +45,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
-        ]);
+        ],201);
     }
     public function login(Request $request)
     {
@@ -62,9 +70,10 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
-            ]);
+            ],200);
         }
     }
+
     public function storeEventAndImages(Request $request)
     {
         $validator = Validator::make($request->all(), [
