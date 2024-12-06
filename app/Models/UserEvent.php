@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserEvent extends Model
 {
-    //
+    protected $fillable = [
+        'eventName',
+        'venueName',
+        'contactNo',
+        'description',
+        'user_id',
+    ];
 }
