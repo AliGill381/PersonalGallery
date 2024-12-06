@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserImage extends Model
 {
-    //
+    protected $fillable = [
+        'user_event_id',
+        'image',
+    ];
 }
