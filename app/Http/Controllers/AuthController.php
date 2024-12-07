@@ -76,9 +76,10 @@ class AuthController extends Controller
 
     public function storeEventAndImages(Request $request)
     {
+        // dd()/
         $validator = Validator::make($request->all(), [
             'eventName' => 'required|string|max:255',
-            'venueName' => 'required|string|max:255',
+            'venuName' => 'required|string|max:255',
             'contactNo' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image files
@@ -97,7 +98,7 @@ class AuthController extends Controller
             $userEvent = UserEvent::create([
                 'user_id' => $user->id,
                 'eventName' => $request->input('eventName'),
-                'venueName' => $request->input('venueName'),
+                'venuName' => $request->input('venuName'),
                 'contactNo' => $request->input('contactNo'),
                 'description' => $request->input('description'),
             ]);
@@ -120,7 +121,7 @@ class AuthController extends Controller
                 'event' => [
                     'id' => $userEvent->id,
                     'eventName' => $userEvent->eventName,
-                    'venueName' => $userEvent->venueName,
+                    'venuName' => $userEvent->venuName,
                     'contactNo' => $userEvent->contactNo,
                     'description' => $userEvent->description,
                 ],
