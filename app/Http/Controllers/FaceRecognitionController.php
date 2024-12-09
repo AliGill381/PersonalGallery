@@ -18,7 +18,7 @@ class FaceRecognitionController extends Controller
                 'key'    => env('AWS_ACCESS_KEY_ID'),
                 'secret' => env('AWS_SECRET_ACCESS_KEY'),
             ]
-        ]);
+        ]); 
 
         $path = storage_path('app/public/user_images');
         $tempPath = storage_path('app/public/user_images/temp/ali.jpeg');
