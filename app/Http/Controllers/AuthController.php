@@ -82,7 +82,7 @@ class AuthController extends Controller
             'venuName' => 'required|string|max:255',
             'contactNo' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image files
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -107,12 +107,12 @@ class AuthController extends Controller
             foreach ($request->file('images') as $image) {
                 $imagePath = $image->store('user_images', 'public');
                 $userImage = UserImage::create([
-                    'user_event_id' => $userEvent->id, // Link to the event
+                    'user_event_id' => $userEvent->id,
                     'image' => $imagePath,
                 ]);
                 $uploadedImages[] = [
                     'id' => $userImage->id,
-                    'image_path' => asset('storage/' . $userImage->image), // Get the URL of the stored image
+                    'image_path' => asset('storage/' . $userImage->image),
                 ];
             }
             return response()->json([

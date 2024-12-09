@@ -1,16 +1,31 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
 use Aws\Rekognition\RekognitionClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
 class FaceRecognitionController extends Controller
 {
-    public function compareFaces()
+    public function compareFaces(Request $req)
     {
-        // Initialize Rekognition Client
+        $validator = Validator::make($req->all(), [
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'error' => $validator->errors()->first()
+            ], 422);
+        }
+        if($req->file('images'))
+        {
+            $image=$req->image;
+            $imagePath = $image->store('user_images/temp', 'public');
+        }
         $client = new RekognitionClient([
             'region'    => env('AWS_DEFAULT_REGION'),
             'version'   => 'latest',
@@ -18,11 +33,10 @@ class FaceRecognitionController extends Controller
                 'key'    => env('AWS_ACCESS_KEY_ID'),
                 'secret' => env('AWS_SECRET_ACCESS_KEY'),
             ]
-        ]); 
-
+        ]);
         $path = storage_path('app/public/user_images');
-        $tempPath = storage_path('app/public/user_images/temp/ali.jpeg');
-        $sourceImagePath = $tempPath; // Directly assign the path
+        $tempPath = $imagePath;
+        $sourceImagePath = $tempPath;
         $allImages = File::files($path);
         $matches = [];
 
@@ -36,11 +50,9 @@ class FaceRecognitionController extends Controller
             ]);
 
             if (!empty($result['FaceMatches'])) {
-                $matches[] = $targetImage->getFilename(); // Collect matched images
+                $matches[] = $targetImage->getFilename();
             }
         }
-        // dd($matches);
-        return view('faces' , compact('matches'));
-        // return response()->json(['matches' => $matches]);
+        return view('faces', compact('matches'));
     }
 }
